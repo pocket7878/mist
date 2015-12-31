@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(mylisp)
+project(mist)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -19,4 +19,4 @@ set(SOURCE_FILES
     read.h
     TypeDef.h builtin_symbols.cpp builtin_symbols.h)
 
-add_executable(mylisp ${SOURCE_FILES})
+add_executable(mist ${SOURCE_FILES})
