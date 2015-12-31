@@ -2,6 +2,7 @@
 #include <string>
 #include "TypeDef.h"
 #include "Env.h"
+#include "builtin_symbols.h"
 
 using namespace std;
 
@@ -20,7 +21,9 @@ lptr Env::lookup(string name) {
   iter = this->binding.find(name);
   if(iter != this->binding.end()) {
     return iter->second;
+  } else {
+    return builtin_symbol(name);
   }
-  return nullptr;
+  throw string("Undefined symbol: " + name);
 }
 

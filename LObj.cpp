@@ -65,6 +65,22 @@ void Cons::setCdr(lptr newCdr) {
 }
 
 /*
+ * T
+ */
+T::T() {}
+void T::printObj(ostream &os) {
+  os << "t" << endl;
+}
+
+bool T::isAtom() {
+  return true;
+}
+
+bool T::isSymbol() {
+  return false;
+}
+
+/*
  * Nil
  */
 
@@ -77,6 +93,13 @@ bool Nil::isAtom() {
 }
 bool Nil::isSymbol() {
   return false;
+}
+
+lptr Nil::getCar() {
+  return make_shared<Nil>();
+}
+lptr Nil::getCdr() {
+  return make_shared<Nil>();
 }
 
 /*
@@ -116,12 +139,44 @@ bool String::isSymbol() {
 }
 
 /*
+ * vector
+ */
+Vector::Vector(vector<lptr> obj): values(obj) {}
+
+bool Vector::isAtom() {
+  return false;
+}
+
+bool Vector::isSymbol() {
+  return false;
+}
+
+void Vector::printObj(ostream &os) {
+  os << "#(";
+  for (int i = 0; i < this->values.size(); i++) {
+    lptr obj = this->values[i];
+    obj->printObj(os);
+  }
+  os << ")";
+}
+
+lptr Vector::getItemAt(int i) {
+  return values[i];
+}
+
+void Vector::appendItem(lptr obj) {
+  this->values.push_back(obj);
+}
+
+/*
  * Symbol
  */
 
-Symbol::Symbol(string name) {
+Symbol::Symbol(const string name) {
   this->name = name;
+  std::transform(this->name.begin(), this->name.end(), this->name.begin(), ::toupper);
 }
+
 string Symbol::getName() {
   return this->name;
 }
@@ -138,7 +193,8 @@ void Symbol::printObj(ostream &os) {
 /*
  * Closure
  */
-Closure::Closure(shared_ptr< vector<string> > args, lptr body, eptr env): args(args), env(env), body(body) {}
+Closure::Closure(shared_ptr< vector<string> > args, shared_ptr<string> rarg, lptr body, eptr env):
+  normal_args(args), rest_arg(rarg), env(env), body(body) {}
 
 bool Closure::isAtom() {
   return false;
@@ -153,7 +209,11 @@ void Closure::printObj(ostream &os) {
 }
 
 shared_ptr< vector<string> > Closure::getArgNames() {
-  return this->args;
+  return this->normal_args;
+}
+
+shared_ptr< string > Closure::getRestArgName() {
+  return this->rest_arg;
 }
 
 lptr Closure::getBody() {
@@ -164,4 +224,32 @@ eptr Closure::getClosureEnv() {
   return this->env;
 }
 
+/*
+ * Macro
+ */
+Macro::Macro(shared_ptr< vector<string> > args, shared_ptr<string> rarg, lptr body): normal_args(args), rest_arg(rarg), body(body) {}
 
+bool Macro::isAtom() {
+  return false;
+}
+
+bool Macro::isSymbol() {
+  return false;
+}
+
+void Macro::printObj(ostream &os) {
+  os << "<macro>";
+}
+
+shared_ptr<vector<string> > Macro::getMacroArgNames() {
+  return this->normal_args;
+}
+
+shared_ptr< string > Macro::getMacroRestArgName() {
+  return this->rest_arg;
+}
+
+
+lptr Macro::getMacroBody() {
+  return this->body;
+}

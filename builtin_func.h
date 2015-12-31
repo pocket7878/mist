@@ -10,7 +10,7 @@ using namespace std;
 
 typedef lptr (*LFUNC)(lptr, eptr);
 
-void initBuiltins();
-LFUNC builtin(string name);
+void initBuiltinFunc();
+LFUNC builtin_func(string name);
 
 #endif

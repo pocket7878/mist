@@ -7,16 +7,22 @@
 #include "read.h"
 #include "print.h"
 #include "eval.h"
-#include "builtin.h"
+#include "builtin_func.h"
+#include "builtin_symbols.h"
 
 using namespace std;
 
 int main() {
   shared_ptr<Env> env = shared_ptr<Env>(new Env(nullptr));
-  initBuiltins();
+  initBuiltinFunc();
+  initBuiltinSymbols();
   for(;;) {
     cout << "Lisp>";
-    print(eval(read(cin), env), cout);
+    try {
+      print(eval(read(cin), env), cout);
+    } catch(string str) {
+      cerr << str << endl;
+    }
   }
   cout << endl;
 }
